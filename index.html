@@ -1,80 +1,121 @@
+
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Selamat Ulang Tahun!</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Happy Birthday Mami</title>
   <style>
     body {
       margin: 0;
-      height: 100vh;
-      background: linear-gradient(135deg, #f8cdda 0%, #1d2b64 100%);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-direction: column;
-      overflow: hidden;
-      color: #fff;
+      padding: 0;
+      background: linear-gradient(135deg, #f9c5d1, #fbc2eb);
       font-family: 'Comic Sans MS', cursive, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      overflow: hidden;
     }
-
-    h1 {
-      font-size: 3em;
-      margin: 0;
-      animation: fadeIn 2s ease-in-out;
+    #envelope {
+      width: 200px;
+      height: 150px;
+      background: #fff;
+      border: 2px solid #d6336c;
+      position: relative;
+      cursor: pointer;
+      transition: transform 1s;
     }
-
-    p {
-      font-size: 1.5em;
-      margin-top: 10px;
-      animation: fadeIn 3s ease-in-out;
+    #envelope:before, #envelope:after {
+      content: "";
+      position: absolute;
+      border-style: solid;
     }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(-20px); }
-      to { opacity: 1; transform: translateY(0); }
+    #envelope:before {
+      top: 0;
+      left: 0;
+      border-width: 75px 100px 0 100px;
+      border-color: #d6336c transparent transparent transparent;
+    }
+    #message {
+      display: none;
+      text-align: center;
+      max-width: 80%;
+      background: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      border: 2px solid #d6336c;
+      font-size: 1.2em;
+      position: relative;
+      z-index: 10;
+    }
+    canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      pointer-events: none;
     }
   </style>
 </head>
 <body>
-  <h1>🎉 Selamat Ulang Tahun! 🎂</h1>
-  <pDSelamat ulang tahun, mami. Makasih udah selalu jadi tempat pulang paling nyaman. Semoga sehat, panjang umur, dan makin banyak bahagianya. Aku sayang mami 🤍</p>
-
-  <!-- Confetti Animation -->
+  <div id="envelope"></div>
+  <div id="message">
+    <h1>Selamat Ulang Tahun, Mami! 🎉</h1>
+    <p>Terima kasih sudah menjadi sosok paling sabar dan penyayang di hidupku.
+    Semoga di usia yang baru ini, Mami selalu diberikan kesehatan, rezeki yang berlimpah, dan kebahagiaan yang nggak pernah putus.
+    Maaf kalau aku sering bikin Mami khawatir atau capek, tapi percayalah aku selalu sayang Mami lebih dari apapun.
+    Tetap jadi Mami terhebat, tetap ceria dan jadi rumah ternyaman buatku.
+    I love you so much, Mami 🤍✨
+    Happy Birthday! 🎂</p>
+  </div>
   <canvas id="confetti"></canvas>
-
   <script>
-    // Confetti simple
+    const envelope = document.getElementById('envelope');
+    const message = document.getElementById('message');
     const canvas = document.getElementById('confetti');
     const ctx = canvas.getContext('2d');
-    let W = window.innerWidth;
-    let H = window.innerHeight;
-    canvas.width = W;
-    canvas.height = H;
+
+    envelope.addEventListener('click', () => {
+      envelope.style.transform = 'rotateX(90deg)';
+      setTimeout(() => {
+        envelope.style.display = 'none';
+        message.style.display = 'block';
+        startConfetti();
+      }, 1000);
+    });
+
+    window.addEventListener('resize', () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    });
+
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
 
     const confettiCount = 300;
     const confetti = [];
 
-    for(let i = 0; i < confettiCount; i++) {
+    for (let i = 0; i < confettiCount; i++) {
       confetti.push({
-        x: Math.random() * W,
-        y: Math.random() * H - H,
-        r: Math.random() * 6 + 2,
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height - canvas.height,
+        r: Math.random() * 6 + 4,
         d: Math.random() * confettiCount,
-        color: `hsl(${Math.random() * 360}, 70%, 60%)`,
+        color: `hsl(${Math.random() * 360}, 100%, 50%)`,
         tilt: Math.floor(Math.random() * 10) - 10,
-        tiltAngleIncremental: Math.random() * 0.07 + 0.05,
+        tiltAngleIncremental: (Math.random() * 0.07) + 0.05,
         tiltAngle: 0
       });
     }
 
     function draw() {
-      ctx.clearRect(0, 0, W, H);
-      confetti.forEach(c => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      confetti.forEach((confetto, index) => {
         ctx.beginPath();
-        ctx.lineWidth = c.r;
-        ctx.strokeStyle = c.color;
-        ctx.moveTo(c.x + c.tilt + c.r / 2, c.y);
-        ctx.lineTo(c.x + c.tilt, c.y + c.tilt + c.r / 2);
+        ctx.lineWidth = confetto.r;
+        ctx.strokeStyle = confetto.color;
+        ctx.moveTo(confetto.x + confetto.tilt + confetto.r / 3, confetto.y);
+        ctx.lineTo(confetto.x + confetto.tilt, confetto.y + confetto.tilt + confetto.r / 3);
         ctx.stroke();
       });
 
@@ -82,30 +123,30 @@
     }
 
     function update() {
-      confetti.forEach(c => {
-        c.tiltAngle += c.tiltAngleIncremental;
-        c.y += (Math.cos(c.d) + 3 + c.r / 2) / 2;
-        c.x += Math.sin(c.d);
-        c.tilt = Math.sin(c.tiltAngle) * 15;
+      confetti.forEach((confetto, index) => {
+        confetto.tiltAngle += confetto.tiltAngleIncremental;
+        confetto.y += (Math.cos(confetto.d) + 3 + confetto.r / 2) / 2;
+        confetto.x += Math.sin(confetto.d);
+        confetto.tilt = Math.sin(confetto.tiltAngle) * 15;
 
-        if (c.y > H) {
-          c.y = -10;
-          c.x = Math.random() * W;
+        if (confetto.y > canvas.height) {
+          confetti[index] = {
+            x: Math.random() * canvas.width,
+            y: -20,
+            r: confetto.r,
+            d: confetto.d,
+            color: confetto.color,
+            tilt: confetto.tilt,
+            tiltAngleIncremental: confetto.tiltAngleIncremental,
+            tiltAngle: confetto.tiltAngle
+          };
         }
       });
     }
 
-    (function animate() {
-      requestAnimationFrame(animate);
-      draw();
-    })();
-
-    window.addEventListener('resize', () => {
-      W = window.innerWidth;
-      H = window.innerHeight;
-      canvas.width = W;
-      canvas.height = H;
-    });
+    function startConfetti() {
+      setInterval(draw, 20);
+    }
   </script>
 </body>
 </html>
